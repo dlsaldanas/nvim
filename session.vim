@@ -10,18 +10,18 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
 endif
 let s:shortmess_save = &shortmess
 set shortmess+=aoO
-badd +80 init.lua
-badd +1 ~/.config/nvim/init.lua
-badd +1 lua/modules/conform.lua
-badd +1 lua/modules/init.lua
-badd +20 lua/modules/lsp.lua
+badd +1 lua/modules
+badd +44 lua/modules/lsp.lua
+badd +83 init.lua
+badd +67 lua/modules/init.lua
+badd +1 lua/modules/lsp/init.lua
+badd +13 lua/modules/telescope.lua
+badd +18 lua/modules/treesitter.lua
+badd +1 lua/modules/floaterminal.lua
+badd +1 session.vim
 argglobal
 %argdel
-$argadd init.lua
-set stal=2
-tabnew +setlocal\ bufhidden=wipe
-tabrewind
-edit ~/.config/nvim/init.lua
+edit init.lua
 let s:save_splitbelow = &splitbelow
 let s:save_splitright = &splitright
 set splitbelow splitright
@@ -41,7 +41,7 @@ set winwidth=1
 exe 'vert 1resize ' . ((&columns * 77 + 77) / 155)
 exe 'vert 2resize ' . ((&columns * 77 + 77) / 155)
 argglobal
-balt init.lua
+balt lua/modules/init.lua
 setlocal foldmethod=manual
 setlocal foldexpr=v:lua.vim.treesitter.foldexpr()
 setlocal foldmarker={{{,}}}
@@ -52,19 +52,20 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 547 - ((17 * winheight(0) + 21) / 43)
+let s:l = 83 - ((34 * winheight(0) + 22) / 44)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 547
-normal! 09|
+keepjumps 83
+normal! 081|
+lcd ~/.config/nvim-alt
 wincmd w
 argglobal
-if bufexists(fnamemodify("init.lua", ":p")) | buffer init.lua | else | edit init.lua | endif
+if bufexists(fnamemodify("~/.config/nvim-alt/lua/modules/floaterminal.lua", ":p")) | buffer ~/.config/nvim-alt/lua/modules/floaterminal.lua | else | edit ~/.config/nvim-alt/lua/modules/floaterminal.lua | endif
 if &buftype ==# 'terminal'
-  silent file init.lua
+  silent file ~/.config/nvim-alt/lua/modules/floaterminal.lua
 endif
-balt lua/modules/lsp.lua
+balt ~/.config/nvim-alt/lua/modules/init.lua
 setlocal foldmethod=manual
 setlocal foldexpr=v:lua.vim.treesitter.foldexpr()
 setlocal foldmarker={{{,}}}
@@ -75,38 +76,17 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 80 - ((21 * winheight(0) + 21) / 43)
+let s:l = 55 - ((21 * winheight(0) + 22) / 44)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 80
-normal! 038|
+keepjumps 55
+normal! 017|
+lcd ~/.config/nvim-alt
 wincmd w
-2wincmd w
 exe 'vert 1resize ' . ((&columns * 77 + 77) / 155)
 exe 'vert 2resize ' . ((&columns * 77 + 77) / 155)
-tabnext
-edit lua/modules/init.lua
-argglobal
-setlocal foldmethod=manual
-setlocal foldexpr=v:lua.vim.treesitter.foldexpr()
-setlocal foldmarker={{{,}}}
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldenable
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 27 - ((26 * winheight(0) + 21) / 43)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 27
-normal! 0
-lcd ~/.config/nvim-alt
 tabnext 1
-set stal=1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
 endif
@@ -121,6 +101,7 @@ if filereadable(s:sx)
 endif
 let &g:so = s:so_save | let &g:siso = s:siso_save
 set hlsearch
+nohlsearch
 doautoall SessionLoadPost
 unlet SessionLoad
 " vim: set ft=vim :
