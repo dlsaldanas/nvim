@@ -2,36 +2,30 @@ vim.pack.add({
   'https://github.com/neovim/nvim-lspconfig',
 })
 
--- Defer LSP server initialization to UIEnter
-vim.api.nvim_create_autocmd('UIEnter', {
-  once = true,
-  callback = function()
-    -- servers need to be installed from system package manager
-    vim.lsp.enable("vtsls")
-    vim.lsp.enable("denols")
+-- servers need to be installed from system package manager
+vim.lsp.enable("vtsls")
+vim.lsp.enable("denols")
 
-    vim.lsp.config('lua_ls', {
-      filetypes = { 'lua' },
-      settings = {
-        Lua = {
-          runtime = { version = 'LuaJIT' },
-          diagnostics = {
-            globals = { 'vim' },
-          },
-          workspace = {
-            checkThirdParty = false,
-            library = {
-              vim.env.VIMRUNTIME,
-            },
-          },
-          telemetry = { enable = false },
+vim.lsp.config('lua_ls', {
+  filetypes = { 'lua' },
+  settings = {
+    Lua = {
+      runtime = { version = 'LuaJIT' },
+      diagnostics = {
+        globals = { 'vim' },
+      },
+      workspace = {
+        checkThirdParty = false,
+        library = {
+          vim.env.VIMRUNTIME,
         },
       },
-    })
-
-    vim.lsp.enable('lua_ls')
-  end,
+      telemetry = { enable = false },
+    },
+  },
 })
+
+vim.lsp.enable('lua_ls')
 
 -- LspAttach autocmd: enable completion and other features
 vim.api.nvim_create_autocmd('LspAttach', {

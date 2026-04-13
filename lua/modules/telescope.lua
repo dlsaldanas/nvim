@@ -30,12 +30,21 @@ vim.keymap.set("n", "<leader>sg", function()
   builtin.grep_string({ search = vim.fn.input("Grep > ") })
 end, { desc = "Grep string" })
 
+-- LSP keymaps with LSP client check
 vim.keymap.set("n", "grr", function()
+  if not vim.lsp.get_clients({ bufnr = 0 })[1] then
+    vim.notify("No LSP client attached", vim.log.levels.WARN)
+    return
+  end
   ensure_telescope_ready()
   builtin.lsp_references()
-end, { buffer = 0, desc = "[G]oto [R]eferences" })
+end, { desc = "[G]oto [R]eferences" })
 
 vim.keymap.set('n', 'grd', function()
+  if not vim.lsp.get_clients({ bufnr = 0 })[1] then
+    vim.notify("No LSP client attached", vim.log.levels.WARN)
+    return
+  end
   ensure_telescope_ready()
   builtin.lsp_definitions()
 end, { desc = '[G]oto [D]efinition' })

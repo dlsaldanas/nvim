@@ -18,8 +18,8 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 
 vim.o.cursorline = true -- Highlight the line where the cursor is on.
-vim.o.scrolloff = 10 -- Keep this many screen lines above/below the cursor.
-vim.o.list = true -- Show <tab> and trailing spaces.
+vim.o.scrolloff = 10    -- Keep this many screen lines above/below the cursor.
+vim.o.list = true       -- Show <tab> and trailing spaces.
 
 -- If performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s). See `:h 'confirm'`
@@ -47,7 +47,7 @@ vim.diagnostic.config {
   severity_sort = true,
   float = { border = 'rounded', source = 'if_many' },
   underline = { severity = { min = vim.diagnostic.severity.WARN } },
-  virtual_text = true, -- Text shows up at the end of the line
+  virtual_text = true,   -- Text shows up at the end of the line
   virtual_lines = false, -- Text shows up underneath the line, with virtual lines
 
   -- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
@@ -92,7 +92,6 @@ vim.api.nvim_create_autocmd('UIEnter', {
 --
 -- See `:h vim.keymap.set()`, `:h mapping`, `:h keycodes`
 
-
 vim.keymap.set({ 't', 'i' }, '<C-h>', '<C-\\><C-n><C-w>h')
 vim.keymap.set({ 't', 'i' }, '<C-j>', '<C-\\><C-n><C-w>j')
 vim.keymap.set({ 't', 'i' }, '<C-k>', '<C-\\><C-n><C-w>k')
@@ -134,17 +133,15 @@ vim.api.nvim_create_autocmd('UIEnter', {
     require("modules.telescope")
     require("modules.blink")
     require("modules.gitsigns")
-    
     -- Defer fzf-lua and quicker
     vim.pack.add({
       'https://github.com/ibhagwan/fzf-lua',
       'https://github.com/stevearc/quicker.nvim',
     })
-    
     require('fzf-lua').setup { fzf_colors = true }
     require('quicker').setup {}
   end,
 })
 
 vim.pack.add({ { src = "https://github.com/folke/tokyonight.nvim" } })
-vim.cmd("colorscheme tokyonight")
+vim.cmd("colorscheme tokyonight-storm")
