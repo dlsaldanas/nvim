@@ -48,3 +48,21 @@ vim.keymap.set('n', 'grd', function()
   ensure_telescope_ready()
   builtin.lsp_definitions()
 end, { desc = '[G]oto [D]efinition' })
+
+vim.keymap.set('n', '<leader>sr', function()
+  if not vim.lsp.get_clients({ bufnr = 0 })[1] then
+    vim.notify("No LSP client attached", vim.log.levels.WARN)
+    return
+  end
+  ensure_telescope_ready()
+  builtin.resume()
+end, { desc = '[S]earch [R]esume' })
+
+vim.keymap.set({ 'n', 'v' }, '<leader>sw', function()
+  if not vim.lsp.get_clients({ bufnr = 0 })[1] then
+    vim.notify("No LSP client attached", vim.log.levels.WARN)
+    return
+  end
+  ensure_telescope_ready()
+  builtin.grep_string()
+end, { desc = '[S]earch current [W]ord' })
