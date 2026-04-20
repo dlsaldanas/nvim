@@ -12,10 +12,11 @@ lua/modules/
   ├── treesitter.lua            -- treesitter setup, auto-install, highlight, FileType autocmd
   ├── blink.lua                 -- blink.cmp completion engine + LSP/path/snippets sources
   ├── gitsigns.lua              -- gitsigns setup
+  ├── statusline.lua            -- mini.nvim statusline configuration
   └── floaterminal.lua          -- floating terminal implementation
 ```
 
-Each module is `require`d from init.lua (lines 135–140). No dead code.
+Each module is `require`d from init.lua (lines 131–136). No dead code.
 
 ## Plugin Manager
 
@@ -37,7 +38,9 @@ Uses **`vim.pack`** (Neovim built-in, nightly/HEAD only). Not lazy.nvim or packe
 | nvim-treesitter | modules/treesitter.lua | Syntax highlighting / parsing, auto-install |
 | blink.cmp | modules/blink.lua | Autocompletion engine with LSP/path/snippets sources |
 | gitsigns.nvim | modules/gitsigns.lua | Git gutter signs |
+| mini.nvim | modules/statusline.lua | Statusline configuration |
 | tokyonight.nvim | init.lua | Colorscheme with transparent background overrides |
+| vim-fugitive | init.lua | Git commands integration |
 
 Note: Both fzf-lua and telescope are active simultaneously (parallel fuzzy finders).
 
@@ -85,7 +88,7 @@ All configured in modules/telescope.lua:11–17.
 ## Startup Optimization
 
 **All heavy plugins are deferred to `UIEnter` or first use:**
-- `fzf-lua`, `quicker.nvim`, `gitsigns.nvim`: deferred to UIEnter (init.lua:104-119)
+- `fzf-lua`, `quicker.nvim`, `gitsigns.nvim`: deferred to UIEnter (init.lua:128-144)
 - `treesitter`: config deferred to VimEnter with 100ms delay (treesitter.lua:6-17)
 - `lsp` servers: vim.lsp.enable() deferred to UIEnter (lsp.lua:5-29)
 - `telescope`: setup deferred to first keypress via `ensure_telescope_ready()` wrapper (telescope.lua:11-13)

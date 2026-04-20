@@ -20,14 +20,9 @@ vim.keymap.set("n", "<leader>sf", function()
   builtin.find_files()
 end, { desc = "Find files" })
 
-vim.keymap.set("n", "<C-p>", function()
-  ensure_telescope_ready()
-  builtin.git_files()
-end, { desc = "Git files" })
-
 vim.keymap.set("n", "<leader>sg", function()
   ensure_telescope_ready()
-  builtin.grep_string({ search = vim.fn.input("Grep > ") })
+  vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
 end, { desc = "Grep string" })
 
 -- LSP keymaps with LSP client check

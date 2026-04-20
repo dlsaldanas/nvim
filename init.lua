@@ -14,16 +14,24 @@ opt.backup = false
 opt.guicursor = ""
 
 opt.termguicolors = true
-vim.o.ignorecase = true
-vim.o.smartcase = true
+opt.grepprg = "rg --vimgrep" --usar rg como grep de vim
+opt.autoread = true -- Auto reload files changed outside vim
+opt.ignorecase = true
+opt.smartcase = true
 
-vim.o.cursorline = true -- Highlight the line where the cursor is on.
-vim.o.scrolloff = 10    -- Keep this many screen lines above/below the cursor.
-vim.o.list = true       -- Show <tab> and trailing spaces.
+opt.cursorline = true -- Highlight the line where the cursor is on.
+opt.scrolloff = 10    -- Keep this many screen lines above/below the cursor.
+opt.list = true       -- Show <tab> and trailing spaces.
 
 -- If performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s). See `:h 'confirm'`
-vim.o.confirm = true
+opt.confirm = true
+
+opt.smoothscroll = true
+vim.wo.foldmethod = "expr"
+opt.foldlevel = 99 -- Start with all folds open
+opt.cursorline = true
+
 
 
 vim.keymap.set("n", "<leader>Ex", vim.cmd.Ex)
@@ -33,7 +41,6 @@ vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 vim.api.nvim_create_user_command("W", "w", {})
 vim.api.nvim_create_user_command("Q", "q", {})
 
-opt.cursorline = true
 vim.api.nvim_set_hl(0, "LineNr", { fg = "#555555" })
 vim.api.nvim_set_hl(0, "CursorLineNr", {
   fg = "#ffffff",
@@ -53,12 +60,6 @@ vim.diagnostic.config {
   -- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
   -- jump = { float = true },
 }
-
-vim.pack.add({
-  { src = "https://github.com/tpope/vim-fugitive" },
-})
-
-vim.keymap.set("n", "<leader>gs", vim.cmd.Git)
 
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
@@ -114,13 +115,10 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- See `:h :packadd`, `:h vim.pack`
-
 -- Add the "nohlsearch" package to automatically disable search highlighting after
 -- 'updatetime' and when going to insert mode.
 vim.cmd('packadd! nohlsearch')
 
--- Install third-party plugins via "vim.pack.add()".
 -- Load required modules first (lightweight)
 require("modules.floaterminal")
 
@@ -133,6 +131,7 @@ vim.api.nvim_create_autocmd('UIEnter', {
     require("modules.telescope")
     require("modules.blink")
     require("modules.gitsigns")
+    require("modules.statusline")
     -- Defer fzf-lua and quicker
     vim.pack.add({
       'https://github.com/ibhagwan/fzf-lua',
