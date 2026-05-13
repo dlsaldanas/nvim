@@ -1,103 +1,77 @@
-# AGENTS.md — nvim-alt
+# AGENTS.md — nvim config
 
-Alternate Neovim config built from scratch. Experimental, in flux.
+Personal Neovim config. Experimental, in flux.
 
-## Structure
+## Plugin Manager: `vim.pack` (NOT lazy.nvim)
 
-```
-init.lua                        -- entry point: core options, keymaps, autocmds, fzf-lua, quicker, tokyonight
-lua/modules/
-  ├── lsp.lua                   -- LSP servers (vtsls, denols, lua_ls), keymaps, autocmds
-  ├── telescope.lua             -- telescope + plenary, keymaps for find/grep/LSP refs/definitions
-  ├── treesitter.lua            -- treesitter setup, auto-install, highlight, FileType autocmd
-  ├── blink.lua                 -- blink.cmp completion engine + LSP/path/snippets sources
-  ├── gitsigns.lua              -- gitsigns setup
-  ├── statusline.lua            -- mini.nvim statusline configuration
-  └── floaterminal.lua          -- floating terminal implementation
-```
+Built-in `vim.pack` (Neovim nightly/HEAD only). Important differences vs lazy.nvim:
 
-Each module is `require`d from init.lua (lines 131–136). No dead code.
+- Add plugins with `vim.pack.add({ 'url', { src = 'url', version = 'tag' } })`.
+- No `config = function()` callback — call `setup()` yourself after `vim.pack.add`.
+- No declarative lazy-loading — defer manually with autocmds (`UIEnter`, `LspAttach`, `VimEnter`) or wrapper functions.
+- Lockfile: `nvim-pack-lock.json` (do not hand-edit).
+- Update plugins: `:Packupdate` (custom command, init.lua:91).
 
-## Plugin Manager
+## Startup model (do not break)
 
-Uses **`vim.pack`** (Neovim built-in, nightly/HEAD only). Not lazy.nvim or packer.
+Only the colorscheme and `floaterminal` load at startup. Everything else is deferred from init.lua:149-167 inside a `UIEnter` autocmd. When adding a new module:
 
-- Install plugins with `vim.pack.add()` — accepts a list of URL strings or `{ src = "..." }` tables.
-- Lockfile: `nvim-pack-lock.json` (not `lazy-lock.json`).
-- No lazy-loading or `config` callbacks are guaranteed to work the same as lazy.nvim — test after changes.
-- To update plugins: `:Packupdate` (custom user command at init.lua:68).
+1. Add `require("modules.<name>")` inside the `UIEnter` block in init.lua.
+2. Inside the module, defer heavy `setup()` calls behind `UIEnter` / `LspAttach` / `VimEnter` or a first-use wrapper (see `telescope.lua` `ensure_telescope_ready`).
+3. Keymaps can be registered eagerly; the underlying plugin setup runs later.
 
-## Plugin Inventory
+Stated startup budget: ~85ms. Avoid eager `setup()` calls in module top-level.
 
-| Plugin | Module | Purpose |
-|--------|--------|---------|
-| fzf-lua | init.lua | Fuzzy picker (alternative fuzzy finder in parallel with telescope) |
-| quicker.nvim | init.lua | Enhanced quickfix/loclist |
-| nvim-lspconfig | modules/lsp.lua | LSP quickstart configs |
-| telescope.nvim + plenary.nvim | modules/telescope.lua | Fuzzy finder for files, grep, LSP refs/defs |
-| nvim-treesitter | modules/treesitter.lua | Syntax highlighting / parsing, auto-install |
-| blink.cmp | modules/blink.lua | Autocompletion engine with LSP/path/snippets sources |
-| gitsigns.nvim | modules/gitsigns.lua | Git gutter signs |
-| mini.nvim | modules/statusline.lua | Statusline configuration |
-| tokyonight.nvim | init.lua | Colorscheme with transparent background overrides |
-| vim-fugitive | init.lua | Git commands integration |
+## Module layout
 
-Note: Both fzf-lua and telescope are active simultaneously (parallel fuzzy finders).
+`init.lua` requires modules under `lua/modules/`:
+
+| Module | Purpose | Defer trigger |
+|--------|---------|---------------|
+| `floaterminal` | `:Floaterminal` + `<space>tt` toggle | eager (lightweight) |
+| `treesitter` | parsers, `auto_install = true`, fold expr | `VimEnter` + 100ms |
+| `lsp` | `vim.lsp.enable(...)` per server | `UIEnter` (via require) |
+| `telescope` | pickers + LSP refs/defs | first keypress |
+| `blink` | completion (blink.cmp v1.10.2 pinned) | `LspAttach` |
+| `gitsigns` | git gutter, hunk keymaps | `UIEnter` |
+| `statusline` | mini.statusline (`laststatus=3`) | eager inside UIEnter block |
+| `todocomments` | TODO highlights (`signs = false`) | `UIEnter` |
+
+`fzf-lua` and `quicker.nvim` are added inline in init.lua:160-165 (also UIEnter), not as separate modules. fzf-lua and telescope coexist intentionally.
+
+## LSP
+
+`lua/modules/lsp.lua` enables servers via `vim.lsp.enable(...)`: `vtsls`, `denols`, `jsonls`, `zls`, `lua_ls`. **Servers must be installed via system package manager** (Homebrew etc.) — there is no Mason. To add a new server: install the binary, then add `vim.lsp.enable('<name>')` to lsp.lua. Use `vim.lsp.config('<name>', {...})` first if custom settings are needed (see `lua_ls`).
+
+`nvim-lspconfig` is the only plugin pulled in by lsp.lua; configs are written using the new built-in `vim.lsp.config` / `vim.lsp.enable` API, not `require('lspconfig').<name>.setup`.
 
 ## Conventions
 
-- Leader key: `<Space>` (vim.g.mapleader)
-- Indentation: 2 spaces, expandtab
-- Colorscheme: tokyonight with transparent background overrides
-- LSP servers: installed via system package manager (not Mason) — vtsls, denols, lua_ls
-- Window navigation: `<C-h/j/k/l>` for all modes (normal, insert, terminal)
+- Leader: `<Space>`. Indent: 2 spaces, expandtab.
+- Colorscheme: `tokyonight-storm` with transparent overrides (`Normal`, `NormalFloat`, `SignColumn`, `VertSplit` set to `bg = "none"` in init.lua).
+- Window nav `<C-h/j/k/l>` mapped in normal, insert, and terminal modes.
+- Folding: treesitter expr with indent fallback; `foldlevel = 99` (open by default).
+- Diagnostics: `update_in_insert = false`, `virtual_text = true`, `virtual_lines = false`.
 
-## Custom Commands & Utilities
+## Custom commands & key shortcuts
 
-| Command | Action | File |
-|---------|--------|------|
-| `:W` | Alias for `:w` | init.lua:33 |
-| `:Q` | Alias for `:q` | init.lua:34 |
-| `:Packupdate` | Update all plugins via `vim.pack.update()` | init.lua:68 |
-| `<leader>yy` | Copy relative path of current buffer to clipboard | init.lua:76–81 |
-| `<leader>Ex` | Open file explorer (netrw) | init.lua:29 |
-| `<leader>gs` | Open vim-fugitive (`:Git`) | init.lua:61 |
+| Command / map | Action | Source |
+|---------------|--------|--------|
+| `:W` / `:Q` | Aliases for `:w` / `:q` | init.lua:61-62 |
+| `:Packupdate` | `vim.pack.update()` | init.lua:91 |
+| `:Floaterminal` / `<space>tt` | Toggle floating terminal | floaterminal.lua |
+| `<leader>yy` | Copy buffer relative path to `+` register | init.lua:93-104 |
+| `<leader>Ex` | netrw | init.lua:57 |
+| `<leader>q` | `vim.diagnostic.setqflist()` | init.lua:84 |
+| `<leader>gca` / `<leader>grn` / `<leader>f` | LSP code action / rename / format | lsp.lua:77-83 |
+| `<leader>sf` / `<leader>sg` / `<leader>sw` / `<leader>sr` | Telescope find / live grep / grep word / resume | telescope.lua |
+| `grr` / `grd` | Telescope LSP refs / defs (warns if no LSP) | telescope.lua:29-45 |
+| `]h` / `[h` | Next / prev git hunk | gitsigns.lua |
+| `<leader>h*` | gitsigns hunk actions (`s/r/S/u/R/p/b/d/D`) | gitsigns.lua |
 
-## Key LSP Mappings
-
-All configured in modules/lsp.lua:45–50.
-
-| Mapping | Action |
-|---------|--------|
-| `<leader>gca` | LSP code action |
-| `<leader>grn` | LSP rename |
-| `<leader>f` | LSP format buffer |
-
-## Key Telescope Mappings
-
-All configured in modules/telescope.lua:11–17.
-
-| Mapping | Action |
-|---------|--------|
-| `<leader>sf` | Find files |
-| `<C-p>` | Git files |
-| `<leader>sg` | Grep string (interactive input) |
-| `grr` | LSP references |
-| `grd` | LSP definitions |
-
-## Startup Optimization
-
-**All heavy plugins are deferred to `UIEnter` or first use:**
-- `fzf-lua`, `quicker.nvim`, `gitsigns.nvim`: deferred to UIEnter (init.lua:128-144)
-- `treesitter`: config deferred to VimEnter with 100ms delay (treesitter.lua:6-17)
-- `lsp` servers: vim.lsp.enable() deferred to UIEnter (lsp.lua:5-29)
-- `telescope`: setup deferred to first keypress via `ensure_telescope_ready()` wrapper (telescope.lua:11-13)
-- `blink.cmp`: setup deferred to LspAttach event (blink.lua:7-21)
-
-**Result**: Startup time reduced from ~2683ms to ~85ms (**96.8% faster**).
-Only core options, keymaps, and tokyonight colorscheme load at startup.
+There is **no fugitive** and no `<leader>gs` / `<C-p>` mapping — older docs claiming this are stale.
 
 ## Language
 
-- Conversations with the user: Spanish
-- Code, comments, commit messages: English
+- Conversation with the user: Spanish.
+- Code, comments, commit messages, filenames: English.

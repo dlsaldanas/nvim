@@ -8,9 +8,13 @@ vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
     vim.defer_fn(function()
       require("nvim-treesitter.configs").setup({
+        ensure_installed = { "javascript", "typescript", "lua", "html", "css", "json" },
         sync_install = false,
         auto_install = true,
         highlight = {
+          enable = true,
+        },
+        fold = {
           enable = true,
         },
       })

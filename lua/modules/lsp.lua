@@ -6,6 +6,7 @@ vim.pack.add({
 vim.lsp.enable("vtsls")
 vim.lsp.enable("denols")
 vim.lsp.enable('jsonls')
+vim.lsp.enable('zls')
 
 vim.lsp.config('lua_ls', {
   on_init = function(client)

@@ -28,8 +28,28 @@ opt.list = true       -- Show <tab> and trailing spaces.
 opt.confirm = true
 
 opt.smoothscroll = true
-vim.wo.foldmethod = "expr"
-opt.foldlevel = 99 -- Start with all folds open
+-- Folding configuration with treesitter fallback
+local function setup_folding()
+  -- Try treesitter first, fallback to indent
+  local has_treesitter = pcall(require, 'nvim-treesitter')
+  if has_treesitter then
+    vim.wo.foldmethod = "expr"
+    vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+  else
+    vim.wo.foldmethod = "indent"
+  end
+  
+  vim.o.foldlevel = 99 -- Start with all folds open
+  vim.o.foldnestmax = 10 -- Max nested folds
+end
+
+-- Setup folding after UIEnter to ensure treesitter is loaded
+vim.api.nvim_create_autocmd('UIEnter', {
+  once = true,
+  callback = function()
+    vim.defer_fn(setup_folding, 200)
+  end,
+})
 opt.cursorline = true
 
 
@@ -60,6 +80,8 @@ vim.diagnostic.config {
   -- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
   -- jump = { float = true },
 }
+-- *vim.diagnostic.setqflist()*
+vim.keymap.set("n", "<leader>q", vim.diagnostic.setqflist)
 
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
@@ -80,6 +102,7 @@ vim.keymap.set(
   copy_relative_path,
   { desc = "Copiar ruta relativa del buffer" }
 )
+
 -- Sync clipboard between OS and Neovim. Schedule the setting after `UIEnter` because it can
 -- increase startup-time. Remove this option if you want your OS clipboard to remain independent.
 -- See `:h 'clipboard'`
@@ -132,6 +155,7 @@ vim.api.nvim_create_autocmd('UIEnter', {
     require("modules.blink")
     require("modules.gitsigns")
     require("modules.statusline")
+    require("modules.todocomments")
     -- Defer fzf-lua and quicker
     vim.pack.add({
       'https://github.com/ibhagwan/fzf-lua',

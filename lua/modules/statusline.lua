@@ -10,7 +10,7 @@ vim.pack.add({
 
 local statusline = require('mini.statusline')
 -- set use_icons to true if you have a Nerd Font
-statusline.setup({ 
+statusline.setup({
   use_icons = true,
   -- Set content hooks to show current buffer info dynamically
   content = {
