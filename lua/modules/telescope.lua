@@ -7,9 +7,9 @@ local builtin = require("telescope.builtin")
 
 -- Defer telescope setup to first use
 local telescope_setup_done = false
+require("telescope").setup({})
 local function ensure_telescope_ready()
   if not telescope_setup_done then
-    require("telescope").setup({})
     pcall(require('telescope').load_extension, 'fzf')
     telescope_setup_done = true
   end
@@ -22,8 +22,8 @@ end, { desc = "Find files" })
 
 vim.keymap.set("n", "<leader>sg", function()
   ensure_telescope_ready()
-  vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
-end, { desc = "Grep string" })
+  builtin.live_grep()
+end, { desc = '[S]earch by [G]rep' })
 
 -- LSP keymaps with LSP client check
 vim.keymap.set("n", "grr", function()
@@ -45,19 +45,11 @@ vim.keymap.set('n', 'grd', function()
 end, { desc = '[G]oto [D]efinition' })
 
 vim.keymap.set('n', '<leader>sr', function()
-  if not vim.lsp.get_clients({ bufnr = 0 })[1] then
-    vim.notify("No LSP client attached", vim.log.levels.WARN)
-    return
-  end
   ensure_telescope_ready()
   builtin.resume()
 end, { desc = '[S]earch [R]esume' })
 
 vim.keymap.set({ 'n', 'v' }, '<leader>sw', function()
-  if not vim.lsp.get_clients({ bufnr = 0 })[1] then
-    vim.notify("No LSP client attached", vim.log.levels.WARN)
-    return
-  end
   ensure_telescope_ready()
   builtin.grep_string()
 end, { desc = '[S]earch current [W]ord' })

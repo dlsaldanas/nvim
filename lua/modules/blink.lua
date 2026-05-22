@@ -13,8 +13,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
         providers = {
           path = {
             opts = {
-              get_cwd = function(_)
-                return vim.fn.getcwd()
+              get_cwd = function(context)
+                return vim.fn.expand(('#%d:p:h'):format(context.bufnr))
               end,
             },
           },
