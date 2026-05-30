@@ -69,8 +69,6 @@ Stated startup budget: ~85ms. Avoid eager `setup()` calls in module top-level.
 | `]h` / `[h` | Next / prev git hunk | gitsigns.lua |
 | `<leader>h*` | gitsigns hunk actions (`s/r/S/u/R/p/b/d/D`) | gitsigns.lua |
 
-There is **no fugitive** and no `<leader>gs` / `<C-p>` mapping — older docs claiming this are stale.
-
 ## Language
 
 - Conversation with the user: Spanish.
