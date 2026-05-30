@@ -32,7 +32,7 @@ vim.keymap.set('n', '<leader>hd', gitsigns.diffthis, { desc = 'git [d]iff agains
 vim.keymap.set('n', '<leader>hD', function() gitsigns.diffthis '@' end, { desc = 'git [D]iff against last commit' })
 
 -- Toggles
-vim.keymap.set('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line' })
+vim.keymap.set('n', '<leader>tb',  ':<C-U>Gitsigns blame<CR>', { desc = '[T]oggle git show [b]lame line' })
 vim.keymap.set('n', '<leader>td', gitsigns.toggle_deleted, { desc = '[T]oggle git show [d]eleted' })
 
 -- Text object

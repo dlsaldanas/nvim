@@ -10,14 +10,11 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
 endif
 let s:shortmess_save = &shortmess
 set shortmess+=aoO
-badd +136 init.lua
-badd +17 lua/modules/statusline.lua
-badd +11 lua/modules/blink.lua
-badd +31 term://~/.config/nvim//11842:/bin/zsh
+badd +28 lua/modules/gitsigns.lua
+badd +0 lua/modules/lsp.lua
 argglobal
 %argdel
-$argadd init.lua
-edit init.lua
+edit lua/modules/lsp.lua
 let s:save_splitbelow = &splitbelow
 let s:save_splitright = &splitright
 set splitbelow splitright
@@ -37,49 +34,42 @@ set winwidth=1
 exe 'vert 1resize ' . ((&columns * 77 + 77) / 155)
 exe 'vert 2resize ' . ((&columns * 77 + 77) / 155)
 argglobal
-balt lua/modules/statusline.lua
-setlocal foldmethod=manual
+balt lua/modules/gitsigns.lua
+setlocal foldmethod=expr
 setlocal foldexpr=v:lua.vim.treesitter.foldexpr()
 setlocal foldmarker={{{,}}}
 setlocal foldignore=#
-setlocal foldlevel=0
+setlocal foldlevel=99
 setlocal foldminlines=1
-setlocal foldnestmax=20
+setlocal foldnestmax=10
 setlocal foldenable
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 136 - ((11 * winheight(0) + 22) / 44)
+let s:l = 1 - ((0 * winheight(0) + 22) / 44)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 136
-normal! 014|
-lcd ~/.config/nvim
+keepjumps 1
+normal! 0
 wincmd w
 argglobal
-if bufexists(fnamemodify("~/.config/nvim/lua/modules/statusline.lua", ":p")) | buffer ~/.config/nvim/lua/modules/statusline.lua | else | edit ~/.config/nvim/lua/modules/statusline.lua | endif
+if bufexists(fnamemodify("lua/modules/gitsigns.lua", ":p")) | buffer lua/modules/gitsigns.lua | else | edit lua/modules/gitsigns.lua | endif
 if &buftype ==# 'terminal'
-  silent file ~/.config/nvim/lua/modules/statusline.lua
+  silent file lua/modules/gitsigns.lua
 endif
-setlocal foldmethod=manual
+setlocal foldmethod=expr
 setlocal foldexpr=v:lua.vim.treesitter.foldexpr()
 setlocal foldmarker={{{,}}}
 setlocal foldignore=#
-setlocal foldlevel=0
+setlocal foldlevel=99
 setlocal foldminlines=1
-setlocal foldnestmax=20
+setlocal foldnestmax=10
 setlocal foldenable
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 17 - ((16 * winheight(0) + 22) / 44)
+let s:l = 35 - ((16 * winheight(0) + 22) / 44)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 17
-normal! 02|
-lcd ~/.config/nvim
+keepjumps 35
+normal! 035|
 wincmd w
-2wincmd w
 exe 'vert 1resize ' . ((&columns * 77 + 77) / 155)
 exe 'vert 2resize ' . ((&columns * 77 + 77) / 155)
 tabnext 1
