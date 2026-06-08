@@ -58,6 +58,8 @@ vim.lsp.config('lua_ls', {
 })
 
 vim.lsp.enable('lua_ls')
+vim.lsp.enable('taplo')
+vim.lsp.enable('yamlls')
 
 -- LspAttach autocmd: enable completion and other features
 vim.api.nvim_create_autocmd('LspAttach', {
