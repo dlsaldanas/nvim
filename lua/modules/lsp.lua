@@ -13,8 +13,8 @@ vim.lsp.config('lua_ls', {
     if client.workspace_folders then
       local path = client.workspace_folders[1].name
       if
-        path ~= vim.fn.stdpath('config')
-        and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc'))
+          path ~= vim.fn.stdpath('config')
+          and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc'))
       then
         return
       end
@@ -58,14 +58,13 @@ vim.lsp.config('lua_ls', {
 })
 
 vim.lsp.enable('lua_ls')
-vim.lsp.enable('taplo')
 vim.lsp.enable('yamlls')
 
 -- LspAttach autocmd: enable completion and other features
-vim.api.nvim_create_autocmd('LspAttach', {
-  group = vim.api.nvim_create_augroup('my.lsp', {}),
-  callback = function(ev)
-    local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
+-- vim.api.nvim_create_autocmd('LspAttach', {
+--   group = vim.api.nvim_create_augroup('my.lsp', {}),
+--   callback = function(ev)
+--     local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
     -- Enable auto-completion. Note: Use CTRL-Y to select an item. |complete_CTRL-Y|
     -- if client:supports_method('textDocument/completion') then
     -- Optional: trigger autocompletion on EVERY keypress. May be slow!
@@ -74,8 +73,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
     -- vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
     -- end
-  end,
-})
+--   end,
+-- })
 
 vim.keymap.set("n", "<leader>gca", function()
   vim.lsp.buf.code_action()
