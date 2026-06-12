@@ -15,6 +15,7 @@ opt.guicursor = ""
 
 opt.termguicolors = true
 opt.grepprg = "rg --vimgrep" --usar rg como grep de vim
+vim.opt.grepformat = "%f:%l:%c:%m,%f:%l:%m"
 opt.autoread = true -- Auto reload files changed outside vim
 opt.ignorecase = true
 opt.smartcase = true
